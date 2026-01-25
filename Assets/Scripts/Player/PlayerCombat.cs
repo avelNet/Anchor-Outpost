@@ -4,23 +4,26 @@ public class PlayerCombat : MonoBehaviour
 {
     public static PlayerCombat Instance {  get; private set; }
 
-    [SerializeField] private float dashDistance = 3f;
+    [SerializeField] private float dashDistance = 2.5f;
     [SerializeField] private float dashDuration = 0.2f;
 
     private float dashTimer;
     private bool _isDashing;
-
-    private Vector2 dashStartPos;
-    private Vector2 dashTargetPos;
+    private bool _canDash = true;
+    private float _canDashTimer = 0f;
+    private float _dashCoolDown = 2f;
+    private bool _isRunning;
+    private bool _isFlipX;
 
     private Animator _animator;
     private Rigidbody2D _rb;
 
+    private Vector2 dashStartPos;
+    private Vector2 dashTargetPos;
+
     private const string ATTACK = "Attack";
     private const string DASH_ATTACK = "DashAttack";
 
-    private bool _isRunning;
-    private bool _isFlipX;
 
     private void Awake()
     {
@@ -36,6 +39,15 @@ public class PlayerCombat : MonoBehaviour
         HandleInput();
 
         _isFlipX = PlayerVisual.Instance.flipXPlayer();
+
+        if(!_canDash)
+        {
+            _canDashTimer += Time.deltaTime;
+            if(_canDashTimer >= _dashCoolDown)
+            {
+                _canDash = true;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -44,6 +56,7 @@ public class PlayerCombat : MonoBehaviour
         {
             ContinueDash();
         }
+        _canDashTimer += Time.fixedDeltaTime;
     }
 
     private void HandleInput()
@@ -58,8 +71,14 @@ public class PlayerCombat : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            DashAttack();
-            _animator.SetBool("isRunning", false);
+            if(_canDash)
+            {
+                DashAttack();
+                _animator.SetTrigger(DASH_ATTACK);
+
+                _canDash = false;
+                _canDashTimer = 0f;
+            }
         }
     }
 
@@ -70,6 +89,8 @@ public class PlayerCombat : MonoBehaviour
 
     private void DashAttack()
     {
+        Debug.Log("DashDistance: " + dashDistance);
+
         _animator.SetTrigger(DASH_ATTACK);
 
         _isDashing = true;
