@@ -19,10 +19,13 @@ public class EnemyAI : MonoBehaviour
     private float _attackRange = 1f;
     private float _walkRadius = 5f;
     private float _patrolStopDistance = 0.2f;
+    private float _stuckTimer;
+    private float _stuckTimeLimit = 0.5f;
 
     private Vector2 _currentPosition;
     private Vector2 _direction;
     private Vector2 _patrolTarget;
+    private Vector2 _lastPosition;
 
     private bool _isAttacking;
 
@@ -86,11 +89,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void EnterPatrol()
-    {
-        _patrolTarget = GetRandomDirectionPoint();
-    }
-
     private void Patrol()
     {
         _animator.SetBool("isWalking", true);
@@ -107,7 +105,9 @@ public class EnemyAI : MonoBehaviour
 
         _rb.linearVelocity = dir * _moveEnemySpeed;
 
-        if(Vector2.Distance(_rb.position, _patrolTarget) <= _patrolStopDistance)
+        CheckIfStuck();
+
+        if (Vector2.Distance(_rb.position, _patrolTarget) <= _patrolStopDistance)
         {
             _patrolTarget = GetRandomDirectionPoint();
         }
@@ -116,6 +116,24 @@ public class EnemyAI : MonoBehaviour
         if (dist <= _walkingRange && dist > _attackRange)
         {
             _currentState = State.Chasing;
+        }
+    }
+
+    private void CheckIfStuck()
+    {
+        if(Vector2.Distance(_rb.position, _lastPosition) < 0.01f)
+        {
+            _stuckTimer += Time.deltaTime;
+            if(_stuckTimer >= _stuckTimeLimit)
+            {
+                _patrolTarget = GetRandomDirectionPoint();
+                _stuckTimer = 0f;
+            }
+        }
+        else
+        {
+            _stuckTimer = 0f;
+            _lastPosition = _rb.position;
         }
     }
 
