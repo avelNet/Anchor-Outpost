@@ -31,7 +31,6 @@ public class EnemyAttack : MonoBehaviour
 
             if (playerHealth != null)
             {
-                other.GetComponent<PlayerHealth>();
                 playerHealth.TakeDamage(damage);
             }
         }
