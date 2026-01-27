@@ -16,17 +16,20 @@ public class EnemyVisual : MonoBehaviour
 
     public void flipXEnemy(Vector2 direction)
     {
-        if(direction.x < 0)
+        Vector3 scale = transform.localScale;
+        if (direction.x > 0)
         {
-            _sprite.flipX = true;
+            scale.x = 1;
         }
-        else if (direction.x > 0)
+        else if (direction.x < 0)
         {
-            _sprite.flipX = false;
+            scale.x = -1;
         }
         else
         {
             Debug.LogWarning("Error");
         }
+
+        transform.localScale = scale;
     }
 }
