@@ -1,10 +1,13 @@
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class EnemyAI : MonoBehaviour
 {
     [SerializeField] private float _moveEnemySpeed = 3f;
+    [SerializeField] private LayerMask _obstacleMask;
+    [SerializeField] private float _obstacleCheckDistance = 2f;
 
     private State _currentState;
     private Rigidbody2D _rb;
@@ -12,15 +15,14 @@ public class EnemyAI : MonoBehaviour
     private Transform _player;
     private SpriteRenderer _sprite;
 
-    private float _walkingRange = 10f;
-    private float _agroRange = 3f;
-    private float _lostAgroRange = 4f;
+    private float _walkingRange = 5f;
     private float _attackRange = 1f;
     private float _walkRadius = 5f;
+    private float _patrolStopDistance = 0.2f;
 
     private Vector2 _currentPosition;
-    private Vector2 _walkTarget;
     private Vector2 _direction;
+    private Vector2 _patrolTarget;
 
     private bool _isAttacking;
 
@@ -30,6 +32,7 @@ public class EnemyAI : MonoBehaviour
     {
         Idle,
         Chasing,
+        Patrol,
         Attack
     }
 
@@ -42,7 +45,7 @@ public class EnemyAI : MonoBehaviour
         _currentState = State.Idle;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         SwitchState();
     }
@@ -53,6 +56,9 @@ public class EnemyAI : MonoBehaviour
         {
             case State.Idle:
                 Idle();
+                break;
+            case State.Patrol:
+                Patrol();
                 break;
             case State.Chasing:
                 Chasing();
@@ -70,10 +76,65 @@ public class EnemyAI : MonoBehaviour
 
         float dist = Vector2.Distance(_player.position, transform.position);
 
-        if (dist <= 5 && dist > 1)
+        if (dist <= _walkingRange && dist > _attackRange)
         {
             _currentState = State.Chasing;
         }
+        if (dist > _walkingRange)
+        {
+            _currentState = State.Patrol;
+        }
+    }
+
+    private void EnterPatrol()
+    {
+        _patrolTarget = GetRandomDirectionPoint();
+    }
+
+    private void Patrol()
+    {
+        _animator.SetBool("isWalking", true);
+
+        Vector2 dir = (_patrolTarget - (_rb.position)).normalized;
+
+        if(IsObstacleAHead(dir))
+        {
+            _patrolTarget = GetRandomDirectionPoint();
+            return;
+        }
+
+        EnemyVisual.Instance.flipXEnemy(dir);
+
+        _rb.linearVelocity = dir * _moveEnemySpeed;
+
+        if(Vector2.Distance(_rb.position, _patrolTarget) <= _patrolStopDistance)
+        {
+            _patrolTarget = GetRandomDirectionPoint();
+        }
+
+        float dist = Vector2.Distance(_player.position, transform.position);
+        if (dist <= _walkingRange && dist > _attackRange)
+        {
+            _currentState = State.Chasing;
+        }
+    }
+
+    private Vector2 GetRandomDirectionPoint()
+    {
+        Vector2 randomPoint = (Vector2)transform.position + Random.insideUnitCircle * _walkRadius;
+        return randomPoint;
+    }
+
+    private bool IsObstacleAHead(Vector2 dir)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(
+            transform.position,
+            dir,
+            _obstacleCheckDistance,
+            _obstacleMask
+        );
+
+        return hit.collider != null;
     }
 
     private void Chasing()
@@ -84,13 +145,13 @@ public class EnemyAI : MonoBehaviour
         _direction = (_player.position - (Vector3)_rb.position).normalized;
         _rb.linearVelocity = _direction * _moveEnemySpeed;
 
-        if(dist <= 1)
+        if(dist <= _attackRange)
         {
             _currentState = State.Attack; 
         }
-        if(dist >= 3)
+        if (dist > _walkingRange)
         {
-            _currentState = State.Idle; 
+            _currentState = State.Patrol;
         }
 
         EnemyVisual.Instance.flipXEnemy(_direction);

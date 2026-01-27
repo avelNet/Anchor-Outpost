@@ -1,17 +1,15 @@
-using Unity.VisualScripting;
-using UnityEditorInternal;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public static Player Instance { get; private set; }
+    public static Player Instance {  get; private set; }
 
-    private Rigidbody2D _rb;
-    private Vector2 _moveInput;
-
-    private bool _isRunning;
     private float _moveSpeed = 5f;
     private float _minMovingSpeed = 0.1f;
+    private bool _isRunning = false;
+
+    private Rigidbody2D _rb;
+    private Vector2 _inputMove;
 
     private void Awake()
     {
@@ -20,18 +18,20 @@ public class Player : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
     }
 
+    private void Update()
+    {
+        _inputMove = GameInput.Instance.GetMoveDirection();
+    }
+
     private void FixedUpdate()
     {
-        if (PlayerCombat.Instance.IsDashing())
-            return;
         Move();
     }
 
     private void Move()
     {
-        _moveInput = GameInput.Instance.GetMoveDirection();
-        _rb.MovePosition(_rb.position + _moveInput * (_moveSpeed * Time.fixedDeltaTime));
-        if(Mathf.Abs(_moveInput.x) > _minMovingSpeed || Mathf.Abs(_moveInput.y) > _minMovingSpeed)
+        _rb.MovePosition(_rb.position + _inputMove * (_moveSpeed * Time.fixedDeltaTime));
+        if(Mathf.Abs(_inputMove.x) > _minMovingSpeed || Mathf.Abs(_inputMove.y) > _minMovingSpeed)
         {
             _isRunning = true;
         }
@@ -43,6 +43,6 @@ public class Player : MonoBehaviour
 
     public bool IsRunning()
     {
-        return _isRunning;
+        return _isRunning; 
     }
 }
