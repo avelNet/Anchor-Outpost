@@ -34,6 +34,11 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         _isDied = true;
-        _animator.SetBool("isDie", true);
+        _animator.SetTrigger("Dead");
+    }
+
+    public bool IsDied()
+    {
+        return _isDied;
     }
 }

@@ -53,6 +53,11 @@ public class EnemyAI : MonoBehaviour
 
     private void SwitchState()
     {
+        if (PlayerHealth.Instance.IsDied())
+        {
+            _isAttacking = false;
+            _currentState = State.Patrol;
+        }
         switch(_currentState)
         {
             case State.Idle:
@@ -177,7 +182,13 @@ public class EnemyAI : MonoBehaviour
     {
         _rb.linearVelocity = Vector2.zero;
         _animator.SetBool("isChasing", false);
-        if(!_isAttacking)
+        if (PlayerHealth.Instance.IsDied())
+        {
+            _isAttacking = false;
+            _currentState = State.Patrol;
+            return;
+        }
+        if (!_isAttacking)
         {
             _isAttacking = true;
             _animator.SetTrigger(ATTACK);
@@ -187,6 +198,11 @@ public class EnemyAI : MonoBehaviour
     public void OnEndAttack()
     {
         _isAttacking = false; 
+        if(PlayerHealth.Instance.IsDied())
+        {
+            _currentState = State.Patrol;
+            return;
+        }
         float dist = Vector2.Distance(_player.position, transform.position);
         if(dist <= _attackRange)
         {

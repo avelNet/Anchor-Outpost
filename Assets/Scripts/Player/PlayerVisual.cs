@@ -22,7 +22,10 @@ public class PlayerVisual : MonoBehaviour
     private void Update()
     {
         _animator.SetBool(IS_RUNNING, Player.Instance.IsRunning());
-        flipXPlayer();
+        if (!PlayerHealth.Instance.IsDied())
+        {
+            flipXPlayer();
+        }
     }
 
     private void Start()

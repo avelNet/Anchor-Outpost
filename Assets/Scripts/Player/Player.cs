@@ -33,7 +33,11 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        _rb.MovePosition(_rb.position + _inputMove * (_moveSpeed * Time.fixedDeltaTime));
+        if (!PlayerHealth.Instance.IsDied())
+        {
+            _rb.MovePosition(_rb.position + _inputMove * (_moveSpeed * Time.fixedDeltaTime));
+        }
+        
         if(Mathf.Abs(_inputMove.x) > _minMovingSpeed || Mathf.Abs(_inputMove.y) > _minMovingSpeed)
         {
             _isRunning = true;
