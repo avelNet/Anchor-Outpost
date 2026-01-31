@@ -13,7 +13,6 @@ public class EnemyAI : MonoBehaviour
     private Rigidbody2D _rb;
     private Animator _animator;
     private Transform _player;
-    private SpriteRenderer _sprite;
 
     private float _walkingRange = 5f;
     private float _attackRange = 1f;
@@ -41,7 +40,6 @@ public class EnemyAI : MonoBehaviour
 
     private void Awake()
     {
-        _sprite = GetComponent<SpriteRenderer>();
         _player = GameObject.FindWithTag("Player").transform;
         _animator = GetComponentInChildren<Animator>();
         _rb = GetComponent<Rigidbody2D>();

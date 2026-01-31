@@ -34,19 +34,16 @@ public class PlayerVisual : MonoBehaviour
     public bool flipXPlayer()
     {
         _inputMove = GameInput.Instance.GetMoveDirection();
-        bool _isFlipX;
 
         if (_inputMove.x > 0)
         {
-            _isFlipX = _spriteRenderer.flipX = false;
+            transform.localScale = new Vector3(1, 1, 1);
+            _isFlipX = false;
         }
         else if (_inputMove.x < 0)
         {
-            _isFlipX = _spriteRenderer.flipX = true;
-        }
-        else
-        {
-            _isFlipX = _spriteRenderer.flipX;
+            transform.localScale = new Vector3(-1, 1, 1);
+            _isFlipX = true;
         }
         return _isFlipX;
     }

@@ -11,10 +11,13 @@ public class Player : MonoBehaviour
     private Rigidbody2D _rb;
     private Vector2 _inputMove;
 
+    private PlayerHealth _playerHealth;
+
     private void Awake()
     {
         Instance = this;
 
+        _playerHealth = GetComponent<PlayerHealth>();
         _rb = GetComponent<Rigidbody2D>();
     }
 
@@ -44,5 +47,19 @@ public class Player : MonoBehaviour
     public bool IsRunning()
     {
         return _isRunning; 
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("EnemyAttack"))
+        {
+            AttackHitbox _attackHitbox = other.GetComponent<AttackHitbox>();
+
+            if( _attackHitbox != null )
+            {
+                int damage = _attackHitbox.Damage;
+                _playerHealth.TakeDamage(damage);
+            }
+        }
     }
 }

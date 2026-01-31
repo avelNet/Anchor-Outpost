@@ -5,12 +5,14 @@ public class EnemyVisual : MonoBehaviour
     public static EnemyVisual Instance { get; private set; }
 
     private SpriteRenderer _sprite;
+    private Animator _animator;
     private float _moveDir;
 
     private void Awake()
     {
         Instance = this;
 
+        _animator = GetComponent<Animator>();
         _sprite = GetComponent<SpriteRenderer>();
     }
 
@@ -31,5 +33,10 @@ public class EnemyVisual : MonoBehaviour
         }
 
         transform.localScale = scale;
+    }
+
+    public void TakeHit()
+    {
+        _animator.SetTrigger("TakeHit");
     }
 }

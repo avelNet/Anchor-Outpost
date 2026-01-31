@@ -49,14 +49,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Enemy\EnemyAI.cs" />
+    <Compile Include="Assets\Scripts\Enemy\EnemyHealth.cs" />
+    <Compile Include="Assets\Scripts\Player\Combat\PlayerHealth.cs" />
     <Compile Include="Assets\Scripts\GameInput\GameInput.cs" />
-    <Compile Include="Assets\Scripts\Enemy\EnemyAnimationsEvents.cs" />
-    <Compile Include="Assets\Scripts\Enemy\ScriptbleObject\EnemySO.cs" />
-    <Compile Include="Assets\Scripts\Player\PlayerCombat.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerVisual.cs" />
+    <Compile Include="Assets\Scripts\Player\Combat\PlayerCombat.cs" />
     <Compile Include="Assets\Scripts\GameInput\PlayerInputAction.cs" />
-    <Compile Include="Assets\Scripts\Enemy\EnemyAttack.cs" />
-    <Compile Include="Assets\Scripts\Player\PlayerHealth.cs" />
+    <Compile Include="Assets\Scripts\AnimationEvents.cs" />
+    <Compile Include="Assets\Scripts\Enemy\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Enemy\GetCollider.cs" />
+    <Compile Include="Assets\Scripts\Player\Combat\AttackHitbox.cs" />
     <Compile Include="Assets\Scripts\Player\Player.cs" />
     <Compile Include="Assets\Scripts\Enemy\EnemyVisual.cs" />
   </ItemGroup>
