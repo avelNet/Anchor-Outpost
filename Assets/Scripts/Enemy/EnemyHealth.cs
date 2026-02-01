@@ -39,6 +39,11 @@ public class EnemyHealth : MonoBehaviour
         {
             Die();
         }
+        else
+        {
+            _enemyAI.CancelAttack();
+            _animator.SetTrigger("TakeHit");
+        }
     }
 
     private void Die()

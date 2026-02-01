@@ -29,6 +29,10 @@ public class PlayerHealth : MonoBehaviour
         {
             Die();
         }
+        else
+        {
+            _animator.SetTrigger("TakeHit");
+        }
     }
 
     private void Die()

@@ -5,6 +5,8 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class EnemyAI : MonoBehaviour
 {
+    public static EnemyAI Instance { get; private set; }
+
     [SerializeField] private float _moveEnemySpeed = 3f;
     [SerializeField] private LayerMask _obstacleMask;
     [SerializeField] private float _obstacleCheckDistance = 2f;
@@ -40,6 +42,8 @@ public class EnemyAI : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         _player = GameObject.FindWithTag("Player").transform;
         _animator = GetComponentInChildren<Animator>();
         _rb = GetComponent<Rigidbody2D>();
@@ -78,6 +82,7 @@ public class EnemyAI : MonoBehaviour
     private void Idle()
     {
         _animator.SetBool("isChasing", false);
+        _animator.SetBool("isWalking", false);
         _rb.linearVelocity = Vector2.zero;
 
         float dist = Vector2.Distance(_player.position, transform.position);
@@ -161,6 +166,7 @@ public class EnemyAI : MonoBehaviour
     private void Chasing()
     {
         _animator.SetBool("isChasing", true);
+        _animator.SetBool("isWalking", false);
 
         float dist = Vector2.Distance(_player.position, transform.position);
         _direction = (_player.position - (Vector3)_rb.position).normalized;
@@ -182,6 +188,7 @@ public class EnemyAI : MonoBehaviour
     {
         _rb.linearVelocity = Vector2.zero;
         _animator.SetBool("isChasing", false);
+        _animator.SetBool("isWalking", false);
         if (PlayerHealth.Instance.IsDied())
         {
             _isAttacking = false;
@@ -211,6 +218,20 @@ public class EnemyAI : MonoBehaviour
         else
         {
             _currentState = State.Chasing;
+        }
+    }
+
+    public void CancelAttack()
+    {
+        _isAttacking = false;
+        float dist = Vector2.Distance(_player.position, transform.position);
+        if (dist <= _walkingRange)
+        {
+            _currentState = State.Chasing;
+        }
+        else
+        {
+            _currentState = State.Patrol;
         }
     }
 }

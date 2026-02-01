@@ -918,7 +918,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a34629123d35b74c985ac92ee5cd36d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GetCollider
-  _collider: {fileID: 566972405}
+  _collider: {fileID: 0}
 --- !u!70 &566972405
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
